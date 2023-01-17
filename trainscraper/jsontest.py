@@ -1,6 +1,6 @@
 import json
 
-with open(r'C:\Users\lasko\Desktop\scrapy\trainscraper\trains.json') as f:
+with open(r'C:\Users\lasko\Desktop\scrapy\trains.json') as f:
    data = json.load(f)
 
 for i in range (0,len(data)):
