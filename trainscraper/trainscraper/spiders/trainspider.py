@@ -1,5 +1,5 @@
 import scrapy
-from scrapy.crawler import CrawlerProcess
+#from scrapy.crawler import CrawlerProcess
 
 class TrainSpider(scrapy.Spider):
     name = "train"
