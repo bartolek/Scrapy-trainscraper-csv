@@ -29,12 +29,13 @@ class TrainSpider(scrapy.Spider):
                     "Average delay": row.xpath('td//text()')[4].extract().split(),
                 }
 
-#            follow_train = 'http://bocznica.eu' + row.xpath('td//a').attrib['href']
-#            if follow_train is not None:
-#                yield scrapy.Request(follow_train, callback=self.parse)
-#
-#            print('test')
-            
+            follow_train = 'http://bocznica.eu' + row.xpath('td//a').attrib['href']
+            print(follow_train)
+            yield response.follow(follow_train, callback=self.parse_second)
+
+    def parse_second(self, response):
+        print('test')
+
 
 
 #process = CrawlerProcess(settings = {
