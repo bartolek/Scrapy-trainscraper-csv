@@ -3,21 +3,38 @@ import scrapy
 
 class TrainSpider(scrapy.Spider):
     name = "train"
-    start_urls = ['http://bocznica.eu/']
+    start_urls = ['http://bocznica.eu/trains']
+    allowed_domains = ['bocznica.eu']
+
+    #http://bocznica.eu/stats/42102
 
     def parse(self, response):
-        for row in response.xpath('//*[@class="zestawieniaTable"]//tr')[1:]:
-            if "Kraków" not in ''.join([i for i in row.css('td.relacjaTd::text')[0].extract() if not i.isdigit()]).strip().replace("-", "_").replace(" ", "").replace(":", "").replace("(", "").replace(")", "").replace("/", ""):
-                continue
-            elif "Wrocław" not in ''.join([i for i in row.css('td.relacjaTd::text')[0].extract() if not i.isdigit()]).strip().replace("-", "_").replace(" ", "").replace(":", "").replace("(", "").replace(")", "").replace("/", ""):
-                continue              
+        for row in response.xpath('//table//tr')[1:]:
+            print(row)
+            #print(row.xpath('td//a').attrib['href'])
+            if len(row.xpath('td//text()')[1].extract().split()) > 2:
+                yield {
+                    'Number': row.xpath('td//text()')[0].extract(),
+                    'Train ID': row.xpath('td//text()')[1].extract().split()[1],
+                    'Train Name': (row.xpath('td//text()')[1].extract().split()[2]),
+                    "Route": row.xpath('td//text()')[2].extract() + "-" + row.xpath('td//text()')[3].extract(),
+                    "Average delay": row.xpath('td//text()')[4].extract().split(),
+                }
             else:
                 yield {
                     'Number': row.xpath('td//text()')[0].extract(),
-                    'Type': row.xpath('td//text()')[1].extract().strip(),
-                    'Name': row.css('b::text').extract(),
-                    'Route': ''.join([i for i in row.css('td.relacjaTd::text')[0].extract() if not i.isdigit()]).strip().replace("-", "_").replace(" ", "").replace(":", "").replace("(", "").replace(")", "").replace("/", ""),
+                    'Train ID': row.xpath('td//text()')[1].extract().split()[1],
+                    'Train Name': '',
+                    "Route": row.xpath('td//text()')[2].extract() + "-" + row.xpath('td//text()')[3].extract(),
+                    "Average delay": row.xpath('td//text()')[4].extract().split(),
                 }
+
+#            follow_train = 'http://bocznica.eu' + row.xpath('td//a').attrib['href']
+#            if follow_train is not None:
+#                yield scrapy.Request(follow_train, callback=self.parse)
+#
+#            print('test')
+            
 
 
 #process = CrawlerProcess(settings = {
