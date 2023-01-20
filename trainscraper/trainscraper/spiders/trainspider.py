@@ -1,5 +1,4 @@
 import scrapy
-import math
 
 class TrainSpider(scrapy.Spider):
     name = "train"
@@ -25,9 +24,7 @@ class TrainSpider(scrapy.Spider):
                         "Average delay": row.xpath('td//text()')[4].extract().split(),
                     }
 
-                concert = {'name': 'red hot chilli'}
                 follow_train = 'http://bocznica.eu' + row.xpath('td//a').attrib['href']
-                print(follow_train)
                 yield response.follow(follow_train, callback=self.parse_second, meta={'item': trains})
 
     def parse_second(self, response):
@@ -39,7 +36,7 @@ class TrainSpider(scrapy.Spider):
         amenities = []
         for row in response.xpath('//table//tr')[4:-2]:
             try:
-                stations.append(row.css('a::text')[0].extract().strip())
+                stations.append(row.css('a::text')[0].extract().strip().replace(' ', ' '))
                 avg_d1.append(int(row.css('td::text')[4].extract()))
                 avg_d2.append(int(row.css('td::text')[5].extract()))
                 avg_d3.append(int(row.css('td::text')[6].extract()))
@@ -71,6 +68,6 @@ class TrainSpider(scrapy.Spider):
         item['Amenities'] = amenities
         item['Stations'] = stations
 
-#       if "Kraków Główny" in stations and "Toruń Główny" in stations:
+        if "Kraków Główny" in stations and "Wrocław Główny" in stations:
 #       if "Dębica" in stations:
-        yield item
+            yield item
