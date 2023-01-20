@@ -12,7 +12,7 @@ class TrainSpider(scrapy.Spider):
                     trains = {
                         'Number': row.xpath('td//text()')[0].extract(),
                         'Train ID': row.xpath('td//text()')[1].extract().split()[1],
-                        'Train Name': (row.xpath('td//text()')[1].extract().split()[2]),
+                        'Train Name': row.xpath('td//text()')[1].extract().split()[2],
                         "Route": row.xpath('td//text()')[2].extract() + "-" + row.xpath('td//text()')[3].extract(),
                         "Average delay": row.xpath('td//text()')[4].extract().split(),
                     }
@@ -40,9 +40,9 @@ class TrainSpider(scrapy.Spider):
         for row in response.xpath('//table//tr')[4:-2]:
             try:
                 stations.append(row.css('a::text')[0].extract().strip())
-                avg_d1.append(int(row.css('td::text')[3].extract()))
-                avg_d2.append(int(row.css('td::text')[4].extract()))
-                avg_d3.append(int(row.css('td::text')[5].extract()))
+                avg_d1.append(int(row.css('td::text')[4].extract()))
+                avg_d2.append(int(row.css('td::text')[5].extract()))
+                avg_d3.append(int(row.css('td::text')[6].extract()))
             except IndexError:
                 continue
             except ValueError:
@@ -71,6 +71,6 @@ class TrainSpider(scrapy.Spider):
         item['Amenities'] = amenities
         item['Stations'] = stations
 
-#       if "Kraków Główny" in stations:
-        if "Dębica" in stations:
-            yield item
+#       if "Kraków Główny" in stations and "Toruń Główny" in stations:
+#       if "Dębica" in stations:
+        yield item
